@@ -32,7 +32,7 @@ public class Text
         {
             for (int i = sentence.Tokens.Count - 1; i >= 0; i--)
             {
-                if (sentence.Tokens[i] is Word word && word.Content.Length == wordlength && StartsWithConsonant(word.Content))
+                if (sentence.Tokens[i] is Word word && word.Length == wordlength && StartsWithConsonant(word.Content))
                     sentence.Tokens.RemoveAt(i);
             }
         }
@@ -47,16 +47,16 @@ public class Text
         return !vowels.Contains(char.ToLowerInvariant(value[0]));
     }
 
-    public void SwapWordByLengthWithSubstring(int sentenceNumber, int wordlength, string replacement) {
+    public bool SwapWordByLengthWithSubstring(int sentenceNumber, int wordlength, string replacement) {
         if (sentenceNumber < 1 || sentenceNumber > sentences.Count)
-            return;
+            return false;
 
         foreach (Token token in sentences[sentenceNumber - 1].Tokens)
         {
             if (token is Word word && word.Content.Length == wordlength)
                 word.Content = replacement;
         }
-        return;
+        return true;
     }
 
     public void RemoveStopwords(List<string> stopwords)
