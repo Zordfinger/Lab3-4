@@ -15,5 +15,5 @@ public class Sentence
 
     public Sentence() { }
 
-    public override string ToString() => string.Concat(Tokens.Select(t => t.ToString()));
+    public override string ToString() => string.Concat(Tokens.Select(t => t.LeadingWhitespace + t.Content));
 }

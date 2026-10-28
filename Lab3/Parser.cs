@@ -2,22 +2,26 @@
 
 public static class Parser
 {
-    private static Regex TokenRegex = new(@"[\p{L}\p{M}\p{N}_]+(?:['’\-][\p{L}\p{M}\p{N}_]+)*|[^\s]", RegexOptions.Compiled);
-    private static Regex WordRegex = new(@"^[\p{L}\p{M}\p{N}_]+(?:['’\-][\p{L}\p{M}\p{N}_]+)*$", RegexOptions.Compiled);
+    private static readonly Regex TokenRegex = new(@"(?<space>\s*)(?<token>[\p{L}\p{M}\p{N}_]+(?:['’\-][\p{L}\p{M}\p{N}_]+)*|[^\s])", RegexOptions.Compiled);
+    private static readonly Regex WordRegex = new(@"^[\p{L}\p{M}\p{N}_]+(?:['’\-][\p{L}\p{M}\p{N}_]+)*$", RegexOptions.Compiled);
 
     public static Text ParseText(string source)
     {
-        var result = new Text();
+        Text result = new Text();
         Sentence current = new();
 
         foreach (Match match in TokenRegex.Matches(source))
         {
-            string value = match.Value;
+            string value = match.Groups["token"].Value;
+            string whitespace = match.Groups["space"].Value;
 
             bool isWord = WordRegex.IsMatch(value);
 
-            Token token = isWord ? new Word(value) : new Punctuation(value);
+            Token token = isWord
+                ? new Word(value)
+                : new Punctuation(value);
 
+            token.LeadingWhitespace = whitespace;
             current.Tokens.Add(token);
 
             if (token is Punctuation p &&

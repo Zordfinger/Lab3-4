@@ -47,16 +47,16 @@ public class Text
         return !vowels.Contains(char.ToLowerInvariant(value[0]));
     }
 
-    public bool SwapWordByLengthWithSubstring(int sentenceNumber, int wordlength, string replacement) {
+    public void SwapWordByLengthWithSubstring(int sentenceNumber, int wordlength, string replacement) {
         if (sentenceNumber < 1 || sentenceNumber > sentences.Count)
-            return false;
+            return;
 
         foreach (Token token in sentences[sentenceNumber - 1].Tokens)
         {
             if (token is Word word && word.Content.Length == wordlength)
                 word.Content = replacement;
         }
-        return true;
+        return;
     }
 
     public void RemoveStopwords(List<string> stopwords)

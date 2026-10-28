@@ -1,6 +1,6 @@
 ﻿public class Punctuation : Token
 {
-    public Punctuation(string value) : base(value) { }
 
-    public override string ToString() => Content;
+    public Punctuation() { }
+    public Punctuation(string value) : base(value) { }
 }

@@ -8,5 +8,11 @@ public abstract class Token
     [XmlText]
     public string Content { set; get; }
 
-    protected Token(string value) => Content = value;
- }
+    [XmlAttribute]
+    public string LeadingWhitespace { get; set; } = "";
+
+    public Token() { }
+    public Token(string value) => Content = value;
+
+    public override string ToString() => LeadingWhitespace + Content;
+}
