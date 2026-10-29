@@ -285,3 +285,147 @@ class TextTests
     }
 }
 
+class ConcordanceTests
+{
+    public static int RunTests()
+    {
+        int passed = 0;
+        int failed = 0;
+
+        void Check(string name, Action test)
+        {
+            try
+            {
+                test();
+                passed++;
+                Console.WriteLine("PASSED: " + name);
+            }
+            catch (Exception ex)
+            {
+                failed++;
+                Console.WriteLine("FAIL: " + name);
+                Console.WriteLine("     " + ex.Message);
+            }
+        }
+
+        Check("Concordance counts word occurrences",
+            CountsWordOccurrences);
+
+        Check("Concordance stores line numbers without duplicates",
+            StoresLineNumbersWithoutDuplicates);
+
+        Check("Concordance sorts line numbers",
+            SortsLineNumbers);
+
+        Check("Concordance sorts words alphabetically",
+            SortsWordsAlphabetically);
+
+        Check("Concordance ignores letter case",
+            IgnoresLetterCase);
+
+        Console.WriteLine();
+        Console.WriteLine($"Passed: {passed}; Failed: {failed}");
+
+        return failed == 0 ? 0 : 1;
+    }
+
+    private static void Equal(int expected, int actual)
+    {
+        if (expected != actual)
+        {
+            throw new Exception(
+                $"Expected: {expected}, but was: {actual}");
+        }
+    }
+
+    private static void Contains(string text, string expected)
+    {
+        if (!text.Contains(expected))
+        {
+            throw new Exception(
+                $"Expected text to contain: [{expected}]");
+        }
+    }
+
+    private static void CountsWordOccurrences()
+    {
+        Text text = Parser.ParseText(
+            "piper piper picked");
+
+        var concordance = text.BuildConcordance();
+
+        Equal(2, concordance["piper"].Frequency);
+        Equal(1, concordance["picked"].Frequency);
+    }
+
+    private static void StoresLineNumbersWithoutDuplicates()
+    {
+        Text text = Parser.ParseText(
+            "piper piper piper\npicked piper");
+
+        var concordance = text.BuildConcordance();
+
+        Equal(4, concordance["piper"].Frequency);
+        Equal(2, concordance["piper"].Lines.Count);
+
+        int[] expectedLines = { 1, 2 };
+
+        if (!expectedLines.SequenceEqual(
+                concordance["piper"].Lines))
+        {
+            throw new Exception(
+                "Expected piper line numbers: 1, 2");
+        }
+    }
+
+    private static void SortsLineNumbers()
+    {
+        Text text = Parser.ParseText(
+            "piper\npicked\npiper");
+
+        var concordance = text.BuildConcordance();
+
+        int[] expectedLines = { 1, 3 };
+
+        if (!expectedLines.SequenceEqual(
+                concordance["piper"].Lines))
+        {
+            throw new Exception(
+                "Expected piper line numbers: 1, 3");
+        }
+    }
+
+    private static void SortsWordsAlphabetically()
+    {
+        Text text = Parser.ParseText(
+            "zebra apple mango");
+
+        var concordance = text.BuildConcordance();
+
+        string[] expectedWords =
+        {
+            "apple",
+            "mango",
+            "zebra"
+        };
+
+        if (!expectedWords.SequenceEqual(
+                concordance.Keys))
+        {
+            throw new Exception(
+                "Words are not sorted alphabetically");
+        }
+    }
+
+    private static void IgnoresLetterCase()
+    {
+        Text text = Parser.ParseText(
+            "Peter peter PETER");
+
+        var concordance = text.BuildConcordance();
+
+        Equal(1, concordance.Count);
+        Equal(3, concordance.Values.First().Frequency);
+    }
+}
+

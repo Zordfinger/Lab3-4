@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 
 //TextTests.RunTests();
+ConcordanceTests.RunTests();
 
-RunProgramm();
+//RunProgramm();
 
 void RunProgramm()
 {
