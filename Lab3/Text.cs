@@ -2,6 +2,12 @@
 using System.Text;
 using System.Xml.Serialization;
 
+public class ConcordanceInfo
+{
+    public int Frequency { get; set; } = 0;
+    public SortedSet<int> Lines { get; set; } = new();
+}
+
 [XmlRoot("Text")]
 public class Text
 {
@@ -77,5 +83,39 @@ public class Text
         XmlSerializer serializer = new XmlSerializer(typeof(Text));
         using StreamWriter writer = new StreamWriter(filename, false, new UTF8Encoding(false));
         serializer.Serialize(writer, this);
+    }
+
+    //метод 4 лабы
+    public SortedDictionary<string, ConcordanceInfo> BuildConcordance()
+    {
+        SortedDictionary<string, ConcordanceInfo> concordance = new SortedDictionary<string, ConcordanceInfo>(StringComparer.OrdinalIgnoreCase);
+
+        int lineNumber = 1;
+
+        foreach (Sentence sentence in sentences)
+        {
+            foreach (Token token in sentence.Tokens)
+            {
+                foreach (char c in token.LeadingWhitespace)
+                {
+                    if (c == '\n')
+                        lineNumber++;
+                }
+
+                if (token is Word word)
+                {
+                    if (!concordance.TryGetValue(word.Content, out ConcordanceInfo? entry))
+                    {
+                        entry = new ConcordanceInfo();
+                        concordance[word.Content] = entry;
+                    }
+
+                    entry.Frequency++;
+                    entry.Lines.Add(lineNumber);
+                }
+            }
+        }
+
+        return concordance;
     }
 }

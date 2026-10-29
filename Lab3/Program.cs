@@ -12,8 +12,8 @@ void RunProgramm()
     Console.OutputEncoding = Encoding.UTF8;
 
     string source =
-        "Hello, world and people all around the world! I am learning C#. " +
-        "This is a testы. Как дела? " +
+        "Hello, world and people all around the world! I am learning C#.\n" +
+        "This is a testы. Как дела?\n" +
         "Привет, мир! The cat is sleeping.";
 
     Text text = Parser.ParseText(source);
@@ -84,6 +84,9 @@ void RunProgramm()
         Console.WriteLine($"\nОшибка XML-экспорта: {ex.Message}");
     }
 
-    Console.WriteLine("\nНажми любую клавишу для выхода...");
-    Console.ReadKey();
+    Console.WriteLine("\nКонкорданс:");
+    var concordance = text.BuildConcordance();
+
+    foreach (var item in concordance)
+        Console.WriteLine($"{item.Key,-20} {item.Value.Frequency}: " + string.Join(" ", item.Value.Lines));
 }
