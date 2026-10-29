@@ -53,11 +53,23 @@ void RunProgramm()
     Console.WriteLine("\nПосле замены слов длины 5 в первом предложении:");
     Console.WriteLine(replacedText);
 
+
+    List<string> StopWords = new List<string>();
+    using (StreamReader sr = new StreamReader("stopwords_ru.txt"))
+    {
+        string word = sr.ReadLine().Trim();
+        StopWords.Add(word);
+    };
+
+    using (StreamReader sr = new StreamReader("stopwords_en.txt"))
+    {
+        string word = sr.ReadLine().Trim();
+        StopWords.Add(word);
+    }
+    ;
+
     Text filteredText = Parser.ParseText(source);
-    filteredText.RemoveStopwords(new List<string>
-        {
-            "is", "am", "the", "this", "как"
-        });
+    filteredText.RemoveStopwords(StopWords);
     Console.WriteLine("\nПосле удаления стоп-слов:");
     Console.WriteLine(filteredText);
 
